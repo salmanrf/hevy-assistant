@@ -1,0 +1,27 @@
+# Ignore yarn generated files
+yarn-error.log
+yarn.lock
+.pnp.js
+
+# Ignore node_modules in root
+/node_modules
+/package-lock.json
+
+# Ignore node_modules in packages
+*/node_modules
+
+# Ignore build output
+*/out
+*/build
+
+# Ignore .env files
+.env*
+
+# Ignore VSCode settings
+.vscode/settings.json
+
+# Ignore logs and other generated files
+*.log
+*.log.*
+*.gz
+*.tgz

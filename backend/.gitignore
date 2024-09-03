@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local development settings
+.env
+
+# Logs
+*.log
+
+# Virtual environment
+venv/
+
+# Ignore test-related files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build files
+dist/
+build/
+*.egg-info/
+
+# IDE files
+.vscode/
+.idea/
+
+# Other
+*.pyc
+.DS_Store
+/app/uploads
+
+# Firebase
+ai-chat-*.json
+
+# Huggingface
+.hf_cache
