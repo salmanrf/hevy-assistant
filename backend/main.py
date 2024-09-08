@@ -16,6 +16,7 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
         await mongo_connection.connect()
 
         await mongo_connection.get_server_info()
+
     except Exception as e:
         raise Exception() from e
 
@@ -27,9 +28,22 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
 
-    @app.get("/")
-    def read_root():
-        return {"Hello": "World"}
+    from pydantic import BaseModel, Field
+
+    class MessageModel(BaseModel):
+        message: str = Field(...)
+
+    @app.post("/messages")
+    async def read_root(dto: MessageModel):
+        from src.assistants import assistant_agent
+
+        config = {"configurable": {"thread_id": "1", "username": "nortnb"}}
+
+        res = await assistant_agent.graph.ainvoke(
+            {"messages": ("human", dto.message)}, config=config
+        )
+
+        return res["messages"][-1].content
 
     return app
 
