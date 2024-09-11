@@ -1,11 +1,11 @@
 from typing import Annotated
 from typing_extensions import TypedDict
 
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import StateGraph, START
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph.message import add_messages
-from langchain_core.messages import AnyMessage, AIMessage
+from langchain_core.messages import AnyMessage
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.prompts.chat import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -39,10 +39,19 @@ class Assistant:
         return {"messages": result}
 
     def filter_messages(self, messages: list[AnyMessage]):
+
         messages_size = len(messages)
 
-        if messages_size > 3:
-            return messages[messages_size - 3 :]
+        last_message_is_tool_result = False
+
+        if messages_size > 0 and hasattr(messages[-1], "tool_call_id"):
+            last_message_is_tool_result = True
+
+        if messages_size > 5:
+            # ? Include the last tool_call message if the last message is a tool call result
+            start_index = messages_size - 5 - (1 if last_message_is_tool_result else 0)
+
+            return messages[start_index:]
 
         return messages
 
