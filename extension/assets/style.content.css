@@ -1,0 +1,39 @@
+#hevy-assistant-interface-root * {
+  font-family: __Inter_cc7fef, __Inter_Fallback_cc7fef;
+  box-sizing: border-box;
+}
+
+#hevy-assistant-chat-root {
+  position: fixed;
+  box-sizing: border-box;
+  top: 100%;
+  right: 64px;
+  display: flex;
+  flex-direction: column;
+  font-weight: medium;
+  overflow-x: visible;
+  transition: all 450ms ease-in-out;
+  transform: translateY(-32px);
+  background-color: transparent !important;
+  z-index: 10;
+}
+
+#chat-toggler {
+  height: 38px;
+  align-self: flex-end;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  padding: 0 18px;
+  border-radius: 10px 10px 0 0;
+  transition: all 250ms ease-in-out;
+}
+
+#chat-container {
+  width: 350px;
+  height: 480px;
+  background: white;
+  border-radius: 0 0 10px 10px;
+}
