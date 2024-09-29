@@ -34,6 +34,142 @@
 #chat-container {
   width: 350px;
   height: 480px;
-  background: white;
+  display: flex;
+  flex-direction: column;
+  background: hsl(0, 0%, 96%);
   border-radius: 0 0 10px 10px;
+}
+
+#chat-input-container {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  padding-bottom: 12px;
+  background: hsl(0, 0%, 96%);
+}
+
+#chat-input {
+  min-height: 60px;
+  width: 100%;
+  max-width: 350px;
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+#chat-textarea {
+  position: relative;
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: none;
+  outline: none;
+  min-height: 40px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+#chat-send-btn {
+  background-color: hsl(209, 67%, 59%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  margin-left: 8px;
+  cursor: pointer;
+  align-self: center;
+  transition: all 350ms ease-in-out;
+}
+
+#chat-send-btn:hover {
+  background-color: hsl(209, 67%, 52%);
+}
+
+#chat-messages-container {
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.chat-message {
+  max-width: 65%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 12px 0;
+}
+
+.assistant-message {
+  align-self: flex-start;
+}
+
+.user-message {
+  align-self: flex-end;
+}
+
+.message-author {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
+
+.message-avatar {
+  margin-right: 8px;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.message-author-name {
+  font-weight: 500;
+}
+
+.message-content {
+  max-width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  background-color: white;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-message .message-content {
+  background-color: hsl(209, 67%, 59%);
+  color: white;
+}
+
+.assistant-message .message-content {
+  color: hsl(0, 0%, 20%);
+}
+
+.message-content p {
+  margin: 0;
+  padding: 0;
 }

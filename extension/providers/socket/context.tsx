@@ -23,14 +23,6 @@ function SocketContextProvider({ children }: ProviderProps) {
     init()
   }, [])
 
-  useEffect(() => {
-    if (sioClient) {
-      sioClient.on("greetings", async (event) => {
-        console.log("event", event)
-      })
-    }
-  }, [sioClient])
-
   async function init() {
     const session = await fetchSession()
 
