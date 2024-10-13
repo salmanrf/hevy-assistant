@@ -1,14 +1,14 @@
+from bson import ObjectId
 from typing import Annotated
 from typing_extensions import TypedDict
-
+from langchain_anthropic.chat_models import ChatAnthropic
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.checkpoint.base import BaseCheckpointSaver
+from langgraph.checkpoint.base import BaseCheckpointSaver, empty_checkpoint
 from langgraph.graph.message import add_messages
 from langchain_core.messages import AnyMessage, AIMessage
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.prompts.chat import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 
 
 class AssistantState(TypedDict):
@@ -17,12 +17,12 @@ class AssistantState(TypedDict):
 
 class Assistant:
     prompt: ChatPromptTemplate
-    chat_model: ChatOpenAI
+    chat_model: ChatAnthropic
     runnable: Runnable
     tools: list
 
     def __init__(
-        self, prompt: ChatPromptTemplate, chat_model: ChatOpenAI, tools: list
+        self, prompt: ChatPromptTemplate, chat_model: ChatAnthropic, tools: list
     ) -> None:
         self.prompt = prompt
         self.chat_model = chat_model
@@ -30,8 +30,7 @@ class Assistant:
         self.runnable = self.prompt | self.chat_model.bind_tools(self.tools)
 
     async def __call__(self, state: AssistantState, config: RunnableConfig):
-        filtered_messages = self.filter_messages(state["messages"])
-
+        filtered_messages = state["messages"]
         # formatted_prompt = await self.prompt.aformat(messages=filtered_messages)
 
         result = await self.runnable.ainvoke({"messages": filtered_messages})
@@ -48,6 +47,7 @@ class Assistant:
 
 
 class AssistantAgent:
+    checkpointer: BaseCheckpointSaver
 
     def __init__(self, assistant: Assistant, checkpointer: BaseCheckpointSaver) -> None:
         graph_builder = StateGraph(AssistantState)
@@ -65,3 +65,12 @@ class AssistantAgent:
         graph = graph_builder.compile(checkpointer=checkpointer)
 
         self.graph = graph
+        self.checkpointer = checkpointer
+
+    async def clear_thread(self, thread_id: str):
+        config = {"configurable": {"thread_id": thread_id}}
+        checkpoint = empty_checkpoint()
+
+        self.checkpointer.aput(
+            config=config, checkpoint=checkpoint, metadata={}, new_versions={}
+        )
