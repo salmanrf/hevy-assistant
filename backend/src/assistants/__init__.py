@@ -1,4 +1,5 @@
-from langchain_openai import ChatOpenAI
+from langchain_anthropic.chat_models import ChatAnthropic
+from langgraph.checkpoint.memory import MemorySaver
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -6,15 +7,14 @@ from langchain.prompts.chat import (
 )
 
 from config import config
-from src.checkpointer import mongodb_checkpointer
 from .agent import Assistant, AssistantAgent
-from .tools.find_workouts import find_workout_routine
 from .prompt import ASSISTANT_MAIN_PROMPT
 
-openai_chat_model = ChatOpenAI(
-    model=config.OPENAI_MODEL,
-    temperature=config.OPENAI_TEMPERATURE,
-    api_key=config.OPENAI_API_KEY,
+anthropic_chat_model = ChatAnthropic(
+    api_key=config.ANTHROPIC_API_KEY,
+    model_name=config.ANTHROPIC_MODEL,
+    temperature=config.ANTHROPIC_TEMPERATURE,
+    max_tokens=config.ANTHROPIC_MAX_OUTPUT_TOKEN,
 )
 
 primary_assistant_prompt = ChatPromptTemplate.from_messages(
@@ -26,8 +26,9 @@ primary_assistant_prompt = ChatPromptTemplate.from_messages(
 
 assistant = Assistant(
     prompt=primary_assistant_prompt,
-    chat_model=openai_chat_model,
-    tools=[find_workout_routine],
+    chat_model=anthropic_chat_model,
+    tools=[],
 )
 
-assistant_agent = AssistantAgent(assistant=assistant, checkpointer=mongodb_checkpointer)
+memory = MemorySaver()
+assistant_agent = AssistantAgent(assistant=assistant, checkpointer=memory)

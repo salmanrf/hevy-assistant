@@ -1,10 +1,12 @@
 import uvicorn
+import socketio
 import argparse
 
 from typing import AsyncGenerator
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
+from socket_server import socket_server
 
 
 @asynccontextmanager
@@ -28,22 +30,17 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
 
-    from pydantic import BaseModel, Field
+    sio = socket_server.create_server()
 
-    class MessageModel(BaseModel):
-        message: str = Field(...)
+    socket_app = socketio.ASGIApp(socketio_server=sio)
 
-    @app.post("/messages")
-    async def read_root(dto: MessageModel):
-        from src.assistants import assistant_agent
+    app.mount("/", socket_app)
 
-        config = {"configurable": {"thread_id": "1", "username": "nortnb"}}
+    from event import register_handlers
+    from src.chats.event import register_handlers as register_chat_handlers
 
-        res = await assistant_agent.graph.ainvoke(
-            {"messages": ("human", dto.message)}, config=config
-        )
-
-        return res["messages"][-1].content
+    register_handlers()
+    register_chat_handlers()
 
     return app
 
